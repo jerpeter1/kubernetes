@@ -437,16 +437,16 @@ func MonitorRequest(req *http.Request, verb, group, version, resource, subresour
 
 	dryRun := cleanDryRun(req.URL)
 	elapsedSeconds := elapsed.Seconds()
-
 	systemClient := ""
 	if uas := strings.SplitN(req.UserAgent(), "/", 2); len(uas) > 1 {
 		switch uas[0] {
 		case "kube-apiserver":
 			apiSelfRequestCounter.WithContext(req.Context()).WithLabelValues(reportedVerb, resource, subresource).Inc()
-			fallthrough
-		case "kube-controller-manager", "kube-scheduler", "cluster-policy-controller":
-			systemClient = uas[0]
+			// fallthrough
+			// case "kube-controller-manager", "kube-scheduler", "cluster-policy-controller":
+			// 	systemClient = uas[0]
 		}
+		systemClient = uas[0]
 	}
 	requestCounter.WithContext(req.Context()).WithLabelValues(reportedVerb, dryRun, group, version, resource, subresource, scope, component, codeToString(httpCode), systemClient).Inc()
 
